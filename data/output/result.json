@@ -1,0 +1,67 @@
+{
+  "prompt": "Calculate the square root of 144",
+  "name": "fn_get_square_root",
+  "parameters": {
+    "a": 144
+  }
+}{
+  "prompt": "Calculate the square root of 144",
+  "name": "fn_get_square_root",
+  "parameters": {
+    "a": 144
+  }
+}{
+  "prompt": "Calculate the square root of 144",
+  "name": "fn_get_square_root",
+  "parameters": {
+    "a": 144
+  }
+}{
+  "prompt": "Calculate the square root of 144",
+  "name": "fn_get_square_root",
+  "parameters": {
+    "a": 144
+  }
+}{
+  "prompt": "Calculate the square root of 144",
+  "name": "fn_get_square_root",
+  "parameters": {
+    "a": 144
+  }
+}{
+  "prompt": "Replace all numbers in \"Hello 34 I'm 233 years old\" with NUMBERS",
+  "name": "fn_substitute_string_with_regex",
+  "parameters": {
+    "source_string": "Hello 34 I'm 233 years old",
+    "regex": "([0-9]+)",
+    "replacement": "NUMBERS"
+  }
+}{
+  "prompt": "Ecrit moi les 5 premiers nombres impairs",
+  "name": "fn_add_numbers",
+  "parameters": {
+    "a": 1,
+    "b": 1
+  }
+}{
+  "prompt": "Add two numbers together and return their sum.",
+  "name": "fn_add_numbers",
+  "parameters": {
+    "a": 1,
+    "b": 2
+  }
+}{
+  "prompt": "Add two numbers together and return their sum.",
+  "name": "fn_add_numbers",
+  "parameters": {
+    "a": 1,
+    "b": 2
+  }
+}{
+  "prompt": "Add two numbers together and return their sum.",
+  "name": "fn_add_numbers",
+  "parameters": {
+    "a": 1,
+    "b": 2
+  }
+}
