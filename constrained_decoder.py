@@ -31,35 +31,38 @@ def get_valid_next_tokens_number(
     generated_so_far: str,
     vocab: dict[int, str]
 ) -> set[int]:
-
     valid = set()
-    end_tokens = {",", "}", " }", ", "}
+    # On définit très strictement ce qui termine un nombre dans un JSON/Argument
+    end_tokens = {",", "}", " ]", " )", "\n"} 
 
     for token_id, token_str in vocab.items():
-        # Toujours autoriser les tokens de fin
+        # Si c'est un token de fin, on l'autorise
         if token_str in end_tokens:
             valid.add(token_id)
             continue
 
+        # INTERDICTION des espaces si on a déjà commencé à écrire un chiffre
+        # C'est souvent ça qui fait boucler le modèle 0.6B
+        if " " in token_str and len(generated_so_far) > 0:
+            continue
+
         candidate = generated_so_far + token_str
-        # Valide si candidate est un nombre en cours de construction
-        # (préfixe d'un float valide)
+        
         try:
             float(candidate)
             valid.add(token_id)
         except ValueError:
-            # Cas particulier : "-" ou "3." sont des préfixes valides
-            # mais pas encore des floats complets
-            if candidate in ("-",) or candidate.endswith("."):
+            # On autorise le début d'un nombre négatif ou d'une décimale
+            if candidate == "-" or (candidate.endswith(".") and candidate.count(".") == 1):
                 valid.add(token_id)
+                
     return valid
 
 def generate_number(input_ids: list[int], llm: Small_LLM_Model, vocab: dict[int, str]) -> float:
     generated = ""
+    max_tokens = 10 # Un nombre dépasse rarement 10 tokens
 
-    while True:
-        # Recalculer les tokens valides à chaque step
-        # selon ce qui a déjà été généré
+    for _ in range(max_tokens):
         valid_ids = get_valid_next_tokens_number(generated, vocab)
         logits = llm.get_logits_from_input_ids(input_ids)
         logits = apply_mask(logits, valid_ids)
@@ -67,14 +70,19 @@ def generate_number(input_ids: list[int], llm: Small_LLM_Model, vocab: dict[int,
         next_token_id = logits.index(max(logits))
         next_token_str = vocab[next_token_id]
 
-        # Token de fin → on arrête
-        if next_token_str in (",", "}", " }", ", "):
+        # Si le modèle choisit un token de fin, on sort proprement
+        if next_token_str in {",", "}", " ]", "\n"}:
             break
 
         generated += next_token_str
-        input_ids = input_ids + [next_token_id]
+        input_ids.append(next_token_id)
 
-    return float(generated)
+    # Nettoyage pour éviter l'erreur float() sur une chaîne vide ou juste "-"
+    final_str = generated.strip()
+    try:
+        return float(final_str)
+    except ValueError:
+        return 0.0 # Valeur par défaut en cas d'échec d'extraction
 
 def generate_value(
     param_type: str,

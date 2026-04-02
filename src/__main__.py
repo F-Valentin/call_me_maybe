@@ -60,14 +60,10 @@ def main() -> None:
     with open(args.input) as f:
         data = json.load(f)
         prompts = [p["prompt"] for p in data]
-    i = 0
     for prompt in prompts:
         t = select_function(prompt, functions, llm, vocab_inv)
         r =generate_arguments(prompt, t, llm, vocab_inv)
         print(r)
-        if i == 1:
-            break
-        i += 1
 
 if __name__ == "__main__":
     main()
