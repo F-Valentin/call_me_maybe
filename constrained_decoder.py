@@ -27,33 +27,36 @@ def generate_arguments(prompt: str, function: FunctionDefinition, llm: Small_LLM
         results[param_name] = value
     return results
 
-def get_valid_next_tokens_number(
-    generated_so_far: str,
-    vocab: dict[int, str]
-) -> set[int]:
-    valid = set()
-    # On définit très strictement ce qui termine un nombre dans un JSON/Argument
-    end_tokens = {",", "}", " ]", " )", "\n"} 
 
+def get_valid_next_tokens_number(generated_so_far: str, vocab: dict[int, str]) -> set[int]:
+    valid = set()
+    # On définit ce qui permet de sortir
+    stops = {",", "}", " ", "\n", "<|endoftext|>", "<|im_end|>"}
+
+    # Analyse du nombre en cours
+    has_dot = "." in generated_so_far
+    
     for token_id, token_str in vocab.items():
-        # Si c'est un token de fin, on l'autorise
-        if token_str in end_tokens:
+        # 1. Autoriser TOUJOURS les sorties
+        if any(s in token_str for s in stops):
             valid.add(token_id)
             continue
 
-        # INTERDICTION des espaces si on a déjà commencé à écrire un chiffre
-        # C'est souvent ça qui fait boucler le modèle 0.6B
-        if " " in token_str and len(generated_so_far) > 0:
-            continue
-
+        # 2. Gestion des chiffres
+        # On n'autorise un nouveau token que s'il respecte la syntaxe float
         candidate = generated_so_far + token_str
         
+        # Astuce : On refuse les tokens qui ne sont QUE des zéros 
+        # si on a déjà pas mal de décimales (ex: 3). 
+        # Ça force l'IA à utiliser un token de 'stops' au lieu de boucler.
+        if has_dot and generated_so_far.split(".")[1].endswith("000"):
+             continue
+
         try:
             float(candidate)
             valid.add(token_id)
         except ValueError:
-            # On autorise le début d'un nombre négatif ou d'une décimale
-            if candidate == "-" or (candidate.endswith(".") and candidate.count(".") == 1):
+            if (generated_so_far == "" and candidate == "-") or (candidate.endswith(".") and not has_dot):
                 valid.add(token_id)
                 
     return valid
@@ -62,7 +65,7 @@ def generate_number(input_ids: list[int], llm: Small_LLM_Model, vocab: dict[int,
     generated = ""
     max_tokens = 10 # Un nombre dépasse rarement 10 tokens
 
-    for _ in range(max_tokens):
+    while True:
         valid_ids = get_valid_next_tokens_number(generated, vocab)
         logits = llm.get_logits_from_input_ids(input_ids)
         logits = apply_mask(logits, valid_ids)
@@ -70,10 +73,10 @@ def generate_number(input_ids: list[int], llm: Small_LLM_Model, vocab: dict[int,
         next_token_id = logits.index(max(logits))
         next_token_str = vocab[next_token_id]
 
-        # Si le modèle choisit un token de fin, on sort proprement
-        if next_token_str in {",", "}", " ]", "\n"}:
+        # Liste élargie des signaux d'arrêt
+        if any(s in next_token_str for s in {",", "}", " ", "\n", "<|endoftext|>", "<|im_end|>"}):
             break
-
+        print(next_token_str) 
         generated += next_token_str
         input_ids.append(next_token_id)
 
