@@ -67,26 +67,5 @@
     "returns": {
       "type": "string"
     }
-  },
-  {
-    "name": "fn_is_even",
-    "description": "Check if a number is even.",
-    "parameters": {
-        "n": {
-            "type": "number"
-        }
-    },
-    "returns": {
-        "type": "boolean"
-    }
-  },
-  {
-    "name": "fn_repeat_string",
-    "description": "Repeat a string a given number of times, optionally in uppercase.",
-    "parameters": {
-        "s": {"type": "string"},
-        "uppercase": {"type": "boolean"}
-    },
-    "returns": {"type": "string"}
   }
 ]

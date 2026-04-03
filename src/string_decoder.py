@@ -25,9 +25,8 @@ def generate_string(
         input_ids: list[int], llm: Small_LLM_Model, vocab: dict[int, str]
 ) -> str:
     generated_ids: list[int] = []
-    max_token = 50
 
-    for _ in range(max_token):
+    while True:
         generated_str = llm.decode(generated_ids)
         valid_ids = get_valid_next_tokens_string(generated_str, vocab)
         logits = llm.get_logits_from_input_ids(input_ids)

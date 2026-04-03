@@ -75,6 +75,7 @@ def main() -> None:
             "name": function.name,
             "parameters": parameters
         })
+        print(f"prompt: {prompt}, name: {function.name}, parameters: {parameters}")
     write_output(output, args.output)
 
 

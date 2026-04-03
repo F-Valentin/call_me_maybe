@@ -10,7 +10,7 @@ def get_valid_next_tokens_number(
     has_dot = "." in generated_so_far
 
     for token_id, token_str in vocab.items():
-        if any(s in token_str for s in stops):
+        if token_str.strip() in stops or token_str in stops:
             valid.add(token_id)
             continue
 
@@ -43,10 +43,6 @@ def generate_number(
         next_token_id = logits.index(max(logits))
         next_token_str = vocab[next_token_id]
 
-        if generated == "" and next_token_str == "-":
-            generated += next_token_str
-            input_ids.append(next_token_id)
-            continue
         if any(s in next_token_str for s in {
                ",", "}", " ", "\n", "<|endoftext|>", "<|im_end|>"}):
             break
