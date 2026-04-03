@@ -1,5 +1,6 @@
 from llm_sdk.llm_sdk import Small_LLM_Model
 from src.function_selector import apply_mask
+from typing import cast
 
 
 def get_valid_next_tokens_string(
@@ -41,4 +42,4 @@ def generate_string(
         generated_ids.append(next_token_id)
         input_ids = input_ids + [next_token_id]
 
-    return llm.decode(generated_ids)
+    return cast(str, llm.decode(generated_ids))

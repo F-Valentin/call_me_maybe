@@ -1,6 +1,6 @@
 # Variables
 PYTHON = uv run python
-MODULE = src
+MODULE = src/
 # Valeurs par défaut selon l'énoncé
 FUNC_DEF = data/input/functions_definition.json
 INPUT_FILE = data/input/function_calling_tests.json
@@ -42,4 +42,4 @@ lint:
 		--warn-unused-ignores \
 		--ignore-missing-imports \
 		--disallow-untyped-defs \
-		--check-untyped-defs
+		--check-untyped-defs \

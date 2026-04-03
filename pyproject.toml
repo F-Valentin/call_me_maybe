@@ -11,6 +11,11 @@ dependencies = [
     "pydantic>=2.12.5",
 ]
 
+
+[[tool.mypy.overrides]]
+module = "llm_sdk.*"
+follow_imports = "skip"
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
