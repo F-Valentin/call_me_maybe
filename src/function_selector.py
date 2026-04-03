@@ -78,7 +78,6 @@ def select_function(
         generated += next_token_str
 
         if generated in [f.name for f in functions]:
-            print(generated)
             break
 
         input_ids = input_ids + [next_token_id]

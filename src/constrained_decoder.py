@@ -46,7 +46,7 @@ def generate_value(
     input_ids: list[int],
     llm: Small_LLM_Model,
     vocab: dict[int, str]
-) -> float | str | None:
+) -> float | str | bool | None:
     if param_type == "number":
         return generate_number(input_ids, llm, vocab)
     elif param_type == "string":
