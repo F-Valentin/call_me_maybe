@@ -10,7 +10,7 @@ def get_valid_next_tokens_number(
     has_dot = "." in generated_so_far
 
     for token_id, token_str in vocab.items():
-        if token_str.strip() in stops or token_str in stops:
+        if token_str.strip() in stops:
             valid.add(token_id)
             continue
 
