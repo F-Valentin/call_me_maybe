@@ -53,4 +53,8 @@ def generate_number(
     try:
         return float(final_str)
     except ValueError:
+        print(
+            f"Warning: Parsing failed: '{final_str}'"
+            "cannot be converted in float, return 0.0"
+        )
         return 0.0

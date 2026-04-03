@@ -64,9 +64,14 @@ def main() -> None:
 
     output = []
     functions = load_functions(args.functions_definition)
-    with open(args.input) as f:
-        data = json.load(f)
-        prompts = [p["prompt"] for p in data]
+    try:
+        with open(args.input) as f:
+            data = json.load(f)
+            prompts = [p["prompt"] for p in data]
+    except (FileNotFoundError, json.JSONDecodeError, KeyError) as e:
+        print(f"Erreur lors du chargement des prompts : {e}")
+        sys.exit(1)
+
     for prompt in prompts:
         function = select_function(prompt, functions, llm, vocab_inv)
         parameters = generate_arguments(prompt, function, llm, vocab_inv)

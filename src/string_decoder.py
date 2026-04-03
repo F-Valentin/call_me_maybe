@@ -25,8 +25,9 @@ def generate_string(
         input_ids: list[int], llm: Small_LLM_Model, vocab: dict[int, str]
 ) -> str:
     generated_ids: list[int] = []
+    max_tokens = 200
 
-    while True:
+    for _ in range(max_tokens):
         generated_str = llm.decode(generated_ids)
         valid_ids = get_valid_next_tokens_string(generated_str, vocab)
         logits = llm.get_logits_from_input_ids(input_ids)
@@ -40,5 +41,10 @@ def generate_string(
 
         generated_ids.append(next_token_id)
         input_ids = input_ids + [next_token_id]
+    else:
+        raise RuntimeError(
+            f"generate_string: max_tokens ({max_tokens})"
+            "reached without closing quote"
+        )
 
     return cast(str, llm.decode(generated_ids))
