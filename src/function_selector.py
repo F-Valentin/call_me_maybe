@@ -41,7 +41,6 @@ def get_valid_next_tokens(
 
     for token_id, token_str in vocab.items():
         candidate = generated_so_far + str(token_str)
-        # Valide si candidate est un préfixe d'au moins un nom
         if any(name.startswith(candidate) for name in function_names):
             valid.add(token_id)
 
