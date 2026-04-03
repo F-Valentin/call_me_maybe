@@ -1,6 +1,7 @@
 from pydantic import BaseModel, ConfigDict
 from llm_sdk.llm_sdk import Small_LLM_Model
 
+
 class FunctionDefinition(BaseModel):
     model_config = ConfigDict(strict=True)
 
@@ -8,6 +9,7 @@ class FunctionDefinition(BaseModel):
     description: str
     parameters: dict[str, dict[str, str]]
     returns: dict[str, str]
+
 
 def build_selection_prompt(
     user_prompt: str,
@@ -17,14 +19,16 @@ def build_selection_prompt(
         f"- {f.name}: {f.description}" for f in functions
     )
     return (
-        f"<|im_start|>system\n"
-        f"You are a function calling assistant. "
-        f"Given a user request, you must respond with exactly one function name.\n"
+        "<|im_start|>system\n"
+        "You are a function calling assistant. "
+        "Given a user request, you must:"
+        "respond with exactly one function name.\n"
         f"Available functions:\n{functions_desc}\n"
-        f"Respond with only the function name, nothing else.<|im_end|>\n"
+        "Respond with only the function name, nothing else.<|im_end|>\n"
         f"<|im_start|>user\n{user_prompt}<|im_end|>\n"
-        f"<|im_start|>assistant\n"
+        "<|im_start|>assistant\n"
     )
+
 
 def get_valid_next_tokens(
     generated_so_far: str,
@@ -43,6 +47,7 @@ def get_valid_next_tokens(
 
     return valid
 
+
 def apply_mask(logits: list[float], valid_token_ids: set[int]) -> list[float]:
     mask = [float("-inf")] * len(logits)
 
@@ -50,6 +55,7 @@ def apply_mask(logits: list[float], valid_token_ids: set[int]) -> list[float]:
         mask[idx] = logits[idx]
 
     return mask
+
 
 def select_function(
     prompt: str,
@@ -71,11 +77,9 @@ def select_function(
         next_token_str = vocab[next_token_id]
         generated += next_token_str
 
-         # Vérifier si `generated` correspond exactement à un nom connu
         if generated in [f.name for f in functions]:
             print(generated)
             break
 
         input_ids = input_ids + [next_token_id]
-     # 4. Retrouver et retourner la FunctionDefinition correspondante
     return next(f for f in functions if f.name == generated)
