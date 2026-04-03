@@ -3,33 +3,33 @@
     "prompt": "What is the sum of 2 and 3?"
   },
   {
-    "prompt": "What is the sum of 265 and 345?"
+    "prompt": "What is the sum of -265 and 345?"
   },
   {
-    "prompt": "Greet shrek"
+    "prompt": "Greet ttttttttt"
   },
   {
-    "prompt": "Greet john"
+    "prompt": "Greet john for the ieojriowh"
   },
   {
-    "prompt": "Reverse the string 'hello'"
+    "prompt": "Reverse the string '*hlk'"
   },
   {
     "prompt": "Reverse the string 'world'"
   },
   {
-    "prompt": "What is the square root of 16?"
+    "prompt": "What is the square root of 122?"
   },
   {
-    "prompt": "Calculate the square root of 144"
+    "prompt": "Calculate the square root of 300"
   },
   {
-    "prompt": "Replace all numbers in \"Hello 34 I'm 233 years old\" with NUMBERS"
+    "prompt": "Replace all numbers in \"Hello 34 I'm 233 years old\" with 10"
   },
   {
-    "prompt": "Replace all vowels in 'Programming is fun' with asterisks"
+    "prompt": "Replace all vowels in 'Programming is fun' with }"
   },
   {
-    "prompt": "Substitute the word 'cat' with 'dog' in 'The cat sat on the mat with another cat'"
+    "prompt": "Substitute the word 'tty with 'dog' in 'The cat sat on the mat with another cat'"
   }
 ]

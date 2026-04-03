@@ -16,12 +16,17 @@ def build_selection_prompt(
     functions: list[FunctionDefinition]
 ) -> str:
     functions_desc = "\n".join(
-        f"- {f.name}: {f.description}" for f in functions
+        f"- {
+            f.name}: {
+            f.description} (parameters: {
+            ', '.join(
+                f.parameters.keys())})"
+        for f in functions
     )
     return (
         "<|im_start|>system\n"
         "You are a function calling assistant. "
-        "Given a user request, you must:"
+        "Given a user request, you must "
         "respond with exactly one function name.\n"
         f"Available functions:\n{functions_desc}\n"
         "Respond with only the function name, nothing else.<|im_end|>\n"
@@ -60,7 +65,7 @@ def select_function(
     prompt: str,
     functions: list[FunctionDefinition],
     llm: Small_LLM_Model,
-    vocab: dict[int, str]  # token_id -> string
+    vocab: dict[int, str]
 ) -> FunctionDefinition:
     full_prompt = build_selection_prompt(prompt, functions)
 

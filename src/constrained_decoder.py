@@ -22,7 +22,6 @@ def build_arguments_prompt(user_prompt: str, function: FunctionDefinition,
         "not the result of the function. Do not execute the function. "
         "Do not calculate, do not explain,"
         "do not add extra content.<|im_end|>\n"
-
         f"<|im_start|>user\n{user_prompt}<|im_end|>\n"
         "<|im_start|>assistant\n"
         f"{past_extractions}{', ' if past_extractions else ''}{next_param}: \""
@@ -33,11 +32,15 @@ def generate_arguments(prompt: str, function: FunctionDefinition,
                        llm: Small_LLM_Model, vocab: dict[int, str]) -> dict:
     results: dict[str, Any] = {}
     for param_name, param_info in function.parameters.items():
-        full_prompt = build_arguments_prompt(
-            prompt, function, results, param_name)
-        input_ids = llm.encode(full_prompt)[0].tolist()
-        value = generate_value(param_info["type"], input_ids, llm, vocab)
-        results[param_name] = value
+        try:
+            full_prompt = build_arguments_prompt(
+                prompt, function, results, param_name)
+            input_ids = llm.encode(full_prompt)[0].tolist()
+            value = generate_value(param_info["type"], input_ids, llm, vocab)
+            results[param_name] = value
+        except RuntimeError as e:
+            print(f"Warning: failed to generate '{param_name}': {e}")
+            results[param_name] = None
     return results
 
 
@@ -47,10 +50,15 @@ def generate_value(
     llm: Small_LLM_Model,
     vocab: dict[int, str]
 ) -> float | str | bool | None:
-    if param_type == "number":
-        return generate_number(input_ids, llm, vocab)
-    elif param_type == "string":
-        return generate_string(input_ids, llm, vocab)
-    elif param_type == "boolean":
-        return generate_boolean(input_ids, llm, vocab)
-    return None
+    try:
+        if param_type == "number":
+            return generate_number(input_ids, llm, vocab)
+        elif param_type == "string":
+            return generate_string(input_ids, llm, vocab)
+        elif param_type == "boolean":
+            return generate_boolean(input_ids, llm, vocab)
+        print(f"Warning: unknown param type '{param_type}'")
+        return None
+    except RuntimeError as e:
+        print(f"Warning: generation failed for type '{param_type}': {e}")
+        return None
